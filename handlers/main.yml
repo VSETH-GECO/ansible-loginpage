@@ -1,0 +1,12 @@
+---
+  - name: reload systemd
+    become: True
+    command: systemctl daemon-reload
+    notify: start loginpage
+
+  - name: start loginpage
+    become: True
+    service:
+      name: loginpage
+      state: started
+      enabled: yes

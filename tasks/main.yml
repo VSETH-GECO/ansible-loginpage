@@ -1,0 +1,38 @@
+---
+  - name: Install docker python bindings
+    become: True
+    apt:
+      name: python-docker
+      state: present
+      update_cache: yes
+      cache_valid_time: 1800
+
+  - name: Create container
+    become: True
+    docker_container:
+      name: loginpage
+      image: felunka/local_login
+      volumes:
+        - /etc/loginpage/certs:/etc/ssl/certificates 
+      env:
+        SECRET_KEY_BASE: "{{ loginpage_secret_key_base }}"
+      memory: 512M
+      network_mode: host
+      pull: true
+      restart_policy: on-failure
+      healthcheck:
+        test: ["CMD", "curl", "--fail", "http://127.0.0.1"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 30s
+
+  - name: Install systemd service
+    become: True
+    template:
+      src: loginpage.service.j2
+      dest: /etc/systemd/system/loginpage.service
+      owner: root
+      group: root
+      mode: 0644
+    notify: reload systemd
