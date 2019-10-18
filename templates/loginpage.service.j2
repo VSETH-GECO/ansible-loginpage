@@ -4,7 +4,7 @@ Requires=docker.service
 After=docker.service
 
 [Service]
-Restart=Never
+Restart=never
 ExecStart=/usr/bin/docker start -a loginpage
 ExecStop=/usr/bin/docker stop -t 2 loginpage
 

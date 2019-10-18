@@ -11,11 +11,19 @@
     become: True
     docker_container:
       name: loginpage
+      # uubk/local_login_tmp
       image: felunka/local_login
       volumes:
-        - /etc/loginpage/certs:/etc/ssl/certificates 
+        - /etc/loginpage/certs:/etc/ssl/certificates
       env:
         SECRET_KEY_BASE: "{{ loginpage_secret_key_base }}"
+        DB_USERNAME: "radius"
+        DB_PASSWORD: "{{ vault_mariadb_ha_radius_password }}"
+        DB_HOST: "127.44.0.1"
+        DB_PORT: "4307"
+        DB_NAME: "radius"
+        GECO_API_KEY: "{{ vault_loginpage_api_key }}"
+        RAILS_ENV: "production"
       memory: 512M
       network_mode: host
       pull: true
